@@ -10,6 +10,8 @@ kind: Deployment
 metadata:
   namespace: game-2048
   name: game-2048
+  labels:
+    app.kubernetes.io/client: dev
 spec:
   selector:
     matchLabels:

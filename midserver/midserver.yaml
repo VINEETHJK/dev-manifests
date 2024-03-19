@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: snow-midserver
+spec: {}
+---
+#deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: dev-mid-server
+   namespace: snow-midserver
+   labels:
+      app: mid-server
+spec:
+   replicas: 1
+   selector:
+      matchLabels:
+         app: mid-server
+   template:
+      metadata:
+         labels:
+            app: mid-server
+      spec:
+         containers:
+         - name: mid-server
+           image: moers/mid-server:latest
+           env:
+              - name: SN_HOST_NAME
+                value: dev102625.service-now.com
+              - name: USER_NAME
+                value: kubeops_mid
+              - name: PASSWORD
+                valueFrom:
+                   secretKeyRef:
+                      name: mid-server-secret
+                      key: SN_PASSWD
+              - name: HOSTNAME
+                value: 'sn_mid01'
+           imagePullPolicy: IfNotPresent

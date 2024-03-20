@@ -8,10 +8,32 @@ spec:
   selector:
     app: grafana
   ports:
-    - protocol: TCP
+    - name: http
+	  protocol: TCP
       port: 80
       targetPort: 3000
-
+---
+#Ingress Grafana
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: monitoring
+  name: grafana
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  name: http
 
 ---
 #Prometheus Service

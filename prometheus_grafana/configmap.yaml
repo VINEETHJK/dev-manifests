@@ -1,0 +1,123 @@
+---
+
+# This ConfigMap is used by the grafana
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  namespace: monitoring
+data:
+  grafana.ini: |
+    [server]
+    http_port = 3000
+    [global]
+    log_level = info
+    [security]
+    admin_user = admin
+    admin_password = password   
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+---
+#Prometheus ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config1
+  namespace: monitoring
+data:
+  prometheus.yml: |
+      global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+
+      rule_files:
+        - agentalertrules.yml 
+        - alletraalertrules.yml
+        - brocadealertrules.yml
+        - metaalertrules.yml
+        - nmbalertrules.yml
+        - nvidiaalertrules.yml
+        - oneviewalertrules.yml
+        - paralertrules.yml
+        - prmalertrules.yml
+        - s3alertrules.yml
+        - stoalertrules.yml
+        - vcenteralertrules.yml
+        - wekaalertrules.yml
+
+      alerting:
+        alertmanagers:
+        - scheme: https
+          tls_config:
+            cert_file: /var/ssl/chain.pem
+            key_file: /var/ssl/cert-key.pem
+            insecure_skip_verify: true
+          static_configs:
+          - targets:
+            - alertmanager:9093
+    
+
+      scrape_configs:
+        - job_name: "prometheus"
+          scheme: https
+          tls_config:
+              insecure_skip_verify: true
+          static_configs:
+            - targets: ["localhost:9090"]
+        - job_name: "spog"
+          static_configs:
+            - targets: ['spog:9191']  
+        - job_name: "vmwspog"
+          static_configs:
+            - targets: ['vmwspog:9192']
+        - job_name: "metamonitor"
+          static_configs:
+            - targets: ['metamonitor:9417']
+        - job_name: "linux-servers-site1"
+          static_configs:
+            - targets: ['00.00.00.00:9100','00.00.00.00:9100']
+        - job_name: "linus-servers-site2"
+          static_configs:
+            - targets: ['00.00.00.00:9100','00.00.00.00:9100']
+
+---
+#AlertManager ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+  namespace: monitoring
+data:
+  alertmanager.yml: |
+    route:
+      receiver: 'sysadmin'
+    receivers:
+    - name: 'sysadmin'
+      email_configs:
+      - to: 'gms.sysadmin@company.com'
+        from: 'alertmanager@company.net'
+        smarthost: smptp.company.net:25
+        require_tls: false
+
+---
+#Influxdb-configMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: influxdb-config
+  namespace: monitoring
+data:
+  influxdb.conf: |
+    reporting-disabled = true
+   
+ 
+

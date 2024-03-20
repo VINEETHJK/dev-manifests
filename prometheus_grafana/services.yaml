@@ -1,0 +1,59 @@
+#Service Grafana
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  selector:
+    app: grafana
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+
+
+---
+#Prometheus Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9090
+
+---
+#Alert mnager
+apiVersion: v1
+kind: Service
+metadata:
+  name: alertmanager
+  namespace: monitoring
+spec:
+  selector:
+    app: alertmanager
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9093
+---
+#influxdb
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb
+  namespace: monitoring
+spec:
+  selector:
+    app: influxdb
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8086
+
